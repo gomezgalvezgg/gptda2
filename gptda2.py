@@ -4,7 +4,7 @@ import streamlit as st
 from htmlTemplates import css, bot_template, user_template
 
 #Capturar variables de entorno
-from dotenv import dotenv_values
+# from dotenv import dotenv_values
 #Parsing PDF
 from PyPDF2 import PdfReader
 #Crear chunks válidos para el LLM de OpenAI
@@ -98,13 +98,13 @@ def get_text_chunks(text):
 # Return: vectorstore creado para usar búsquedas con LLM o False si existe un error 
 def create_vectorstore(text_chunks, namespace):
     try:
-        config = dotenv_values()
+        #config = dotenv_values()
         embeddings = OpenAIEmbeddings(openai_api_key=st.session_state.openAI_user_key)
-        vectorstore =  Pinecone.from_texts(api_key=config["PINECONE_API_KEY"],
-                                           environment=config["PINECONE_ENVIROMENT"],
+        vectorstore =  Pinecone.from_texts(api_key=st.secrets["PINECONE_API_KEY"],
+                                           environment=st.secrets["PINECONE_ENVIROMENT"],
                                            texts=text_chunks, 
                                            embedding=embeddings, 
-                                           index_name=config["PINECONE_INDEXNAME"],
+                                           index_name=st.secrets["PINECONE_INDEXNAME"],
                                            namespace=namespace)
         return vectorstore
     except Exception:
@@ -118,10 +118,10 @@ def create_vectorstore(text_chunks, namespace):
 # Return: vectorstore asociado al juego para usar búsquedas con LLM o False si existe un error 
 def get_vectorstore(namespace):
     try:
-        config = dotenv_values()
+        #config = dotenv_values()
         embeddings = OpenAIEmbeddings(openai_api_key=st.session_state.openAI_user_key)
         vectorstore =  Pinecone.from_existing_index(embedding=embeddings,
-                                                    index_name=config["PINECONE_INDEXNAME"],
+                                                    index_name=st.secrets["PINECONE_INDEXNAME"],
                                                     namespace=namespace)
         return vectorstore
     except Exception:
@@ -204,11 +204,11 @@ def checkOpenAIKey(openAI_user_key):
 def load_games():
     try:
         # Cargamos las variables de entorno relacionadas con PineCone
-        config = dotenv_values()
-        pinecone.init(api_key=config["PINECONE_API_KEY"], 
-                      environment=config["PINECONE_ENVIROMENT"])
+        #config = dotenv_values()
+        pinecone.init(api_key=st.secrets["PINECONE_API_KEY"], 
+                      environment=st.secrets["PINECONE_ENVIROMENT"])
         
-        pineconeIndexName = config["PINECONE_INDEXNAME"]
+        pineconeIndexName = st.secrets["PINECONE_INDEXNAME"]
         if pineconeIndexName:
             # Si no esta el indice creado, se crea en PineCone. En este caso, la lista de juegos estará vacia
             if pineconeIndexName not in pinecone.list_indexes():
@@ -226,10 +226,10 @@ def load_games():
 
             # Registramos en gamesNamepsaces los gamespaces asociados al prefijo de juegos da2 (configurable en .env)
             gamesNamepsaces = []
-            pineConePrefixLen = len(config["PINECONE_PREFIX"])
+            pineConePrefixLen = len(st.secrets["PINECONE_PREFIX"])
             for namespace in pineconeNamespaces:
                 # Si el nombre del namespace (ej: 'gptda2-Deep Sea Adventure') empieza por el prefix configurado ('gptda2-')
-                if namespace.startswith(config["PINECONE_PREFIX"]):
+                if namespace.startswith(st.secrets["PINECONE_PREFIX"]):
                     # Se añade a la lista de juegos con embeddings generado
                     gameName = namespace[pineConePrefixLen:]
                     gamesNamepsaces.append(gameName)
@@ -284,8 +284,8 @@ def main():
     # El resto de la interfaz no se muestra hasta que no se haya detectado un OpenAI Key válido      
     if st.session_state.openAI_user_key:
         st.header("GPT-Da2:")
-        config = dotenv_values()
-        pineConePrefix = config["PINECONE_PREFIX"]
+        #config = dotenv_values()
+        pineConePrefix = st.secrets["PINECONE_PREFIX"]
 
         # Si es la primera vez que se carga la pagina (gamelist vacia), se buscan los juegos disponibles en Pinecone
         if not st.session_state.gameList:
