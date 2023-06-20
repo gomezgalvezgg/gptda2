@@ -32,3 +32,4 @@ bin/tqdm
 bin/watchmedo
 pyvenv.cfg
 .env
+.streamlit/secrets.toml

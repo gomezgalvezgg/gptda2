@@ -98,7 +98,6 @@ def get_text_chunks(text):
 # Return: vectorstore creado para usar búsquedas con LLM o False si existe un error 
 def create_vectorstore(text_chunks, namespace):
     try:
-        #config = dotenv_values()
         embeddings = OpenAIEmbeddings(openai_api_key=st.session_state.openAI_user_key)
         vectorstore =  Pinecone.from_texts(api_key=st.secrets["PINECONE_API_KEY"],
                                            environment=st.secrets["PINECONE_ENVIROMENT"],
@@ -118,7 +117,6 @@ def create_vectorstore(text_chunks, namespace):
 # Return: vectorstore asociado al juego para usar búsquedas con LLM o False si existe un error 
 def get_vectorstore(namespace):
     try:
-        #config = dotenv_values()
         embeddings = OpenAIEmbeddings(openai_api_key=st.session_state.openAI_user_key)
         vectorstore =  Pinecone.from_existing_index(embedding=embeddings,
                                                     index_name=st.secrets["PINECONE_INDEXNAME"],
@@ -204,7 +202,8 @@ def checkOpenAIKey(openAI_user_key):
 def load_games():
     try:
         # Cargamos las variables de entorno relacionadas con PineCone
-        #config = dotenv_values()
+
+        #Configuracion gestionado por Streamlit. Para debugging en local crear fichero en .streamlit/secrests.toml
         pinecone.init(api_key=st.secrets["PINECONE_API_KEY"], 
                       environment=st.secrets["PINECONE_ENVIROMENT"])
         
@@ -284,7 +283,8 @@ def main():
     # El resto de la interfaz no se muestra hasta que no se haya detectado un OpenAI Key válido      
     if st.session_state.openAI_user_key:
         st.header("GPT-Da2:")
-        #config = dotenv_values()
+
+        #Configuracion gestionado por Streamlit. Para debugging en local crear fichero en .streamlit/secrests.toml
         pineConePrefix = st.secrets["PINECONE_PREFIX"]
 
         # Si es la primera vez que se carga la pagina (gamelist vacia), se buscan los juegos disponibles en Pinecone

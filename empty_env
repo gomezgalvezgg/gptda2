@@ -1,5 +1,6 @@
+# Crear fichero .streamlit/secrests.toml con siguientes parametros
+
 # Variables de configración para conexión a PineCone
-# Crear fichero .env con siguientes parametros
 PINECONE_API_KEY = ""
 PINECONE_ENVIROMENT = "" 
 PINECONE_INDEXNAME = ""
