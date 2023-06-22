@@ -1,16 +1,15 @@
 
+import streamlit as st
 import pinecone
-from dotenv import dotenv_values
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
 def borrarJuego(bggID):
-    config = dotenv_values()
-    pinecone.init(api_key=config["PINECONE_API_KEY"], 
-                environment=config["PINECONE_ENVIROMENT"])
+    pinecone.init(api_key=st.secrets["PINECONE_API_KEY"], 
+                environment=st.secrets["PINECONE_ENVIROMENT"])
     
-    pineconeIndexName = config["PINECONE_INDEXNAME"]
-    pineConePrefix = config["PINECONE_PREFIX"]
+    pineconeIndexName = st.secrets["PINECONE_INDEXNAME"]
+    pineConePrefix = st.secrets["PINECONE_PREFIX"]
     pineconeIndex = pinecone.Index(index_name=pineconeIndexName)
 
     url = 'https://boardgamegeek.com/boardgame/'+str(bggID)
@@ -21,6 +20,6 @@ def borrarJuego(bggID):
     if not gameTitle == "BoardGameGeek":
         pineconeIndex.delete(delete_all=True, namespace=pineConePrefix+gameTitle)
 
-borrarJuego(239959)
+borrarJuego(213606)
 
 
